@@ -1,60 +1,94 @@
 package com.example.myretail.controller.test;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.myretail.controller.ProductController;
+import com.example.myretail.domain.Product;
+import com.example.myretail.domain.ProductPrice;
 import com.example.myretail.service.ProductService;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(ProductController.class)
+@ExtendWith(MockitoExtension.class)
 public class ProductControllerTest {
- 
-    @Autowired
-    private MockMvc mvc;
- 
-    @MockBean
-    private ProductService service;
-    //@Autowired MongoTemplate mongoTemplate;
-    
-    @Test
-    public void fetchProducts() throws Exception {
-    	
-    	//assertThat(service.getProducts().contains(null));
-    	
-    	 mvc.perform(get("/products")
-    		      .contentType(MediaType.APPLICATION_JSON))
-    	 .andDo(print())
-    		      .andExpect(status().isOk());
-    		      //.andExpect(content().string(containsString("The Big Lebowski (Blu-ray) (Widescreen)")));
-    }
- 
-    @Test
-    public void getProductById() throws Exception {
-    	
-    	//assertThat(service.getProducts().contains(null));
-    	
-    	 mvc.perform(get("/products/13860428")
-    		      .contentType(MediaType.APPLICATION_JSON))
-    	 .andDo(print())
-    		      .andExpect(status().isOk())
-    		      .andExpect(content().string(containsString("13860428")));
-    }
-    
-    
-    
-    // write test cases here
+
+	@InjectMocks
+    private ProductController mockController;
+	
+	@Mock
+    private ProductService productService;
+	
+	 // private ProductRepository repo;
+	  
+//	   @Before
+//	   public void setup() {
+//		   MockitoAnnotations.initMocks(this);
+//	   }
+	    @Test
+	    public void findProductById() {
+	    	
+	    	Product product = new Product((long) 13860428,"The Big Lebowski (Blu-ray) (Widescreen)");
+	    	
+	    	ProductPrice price = new ProductPrice();
+	    	price.setCurrency("USD");
+	    	price.setPrice(13.49);
+	    	price.set_Id((long)13860428);
+	    	product.setCurrent_price(price);
+	  
+	    	try {
+				given(mockController.getProductById((long) 13860428).getBody()).willReturn((product));
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			
+			}
+	    	
+	    	Product expected = null;
+			try {
+				expected = productService.findProductById((long) 13860428);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	assertThat(expected).isNotNull();
+	    	
+	    	
+	       }
+	    
+	    @Test
+ public void updateProductDetails() {
+	    	
+	    	Product product = new Product((long) 13860428,"The Big Lebowski (Blu-ray) (Widescreen)");
+	    	
+	    	ProductPrice price = new ProductPrice();
+	    	price.setCurrency("USD");
+	    	price.setPrice(15.00);
+	    	price.set_Id((long)13860428);
+	    	product.setCurrent_price(price);
+	  
+	    	try {
+				given(mockController.updateProduct((long)13860428, product).getBody()).willReturn(product);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	    	
+//	    	ProductPrice expected = null;
+//			try {
+//				expected = productService.updateProductDetails(price);
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//	    	assertThat(expected).isNotNull();
+	    	
+	    	
+	       }
+	    
+	    
 }

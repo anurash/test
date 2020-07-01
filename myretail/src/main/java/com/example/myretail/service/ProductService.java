@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.myretail.controller.ProductController;
 import com.example.myretail.domain.Product;
 import com.example.myretail.domain.ProductPrice;
 import com.example.myretail.repository.ProductRepository;
@@ -16,8 +19,11 @@ import com.example.myretail.repository.ProductRepository;
 public class ProductService {
 	@Autowired
 	ProductRepository productRepo;
+	
+    Logger logger = LoggerFactory.getLogger(ProductService.class);
 
-	public List<Product> getProducts() {
+
+	public List<Product> getProducts() throws Exception{
 
 		  List<Product> products = new ArrayList<Product>();
 	      products.add(new Product(new Long(54456119),"Creamy Peanut Butter 40oz - Good &#38; Gather&#8482;"));
@@ -29,9 +35,10 @@ public class ProductService {
 	      return products;
 	}
 	
-	public Product findProductById(Long id) {
+	public Product findProductById(Long id) throws Exception{
 		Product product = null;
 		List<Product> products = getProducts();
+		logger.info("Fetching Product from Repository with ID "+id.longValue());
 		for(Product prod:products) {
 			if(prod.getId().longValue() == id.longValue()) {
 				product=prod;
@@ -39,8 +46,7 @@ public class ProductService {
 			}
 		}
 		if(product == null) {
-			System.out.println("Product Not Found!!");
-			return null;
+			throw new Exception("Product not found with ID:"+id.longValue());
 			
 		}
 		Optional<ProductPrice> price =  productRepo.findById(id);
@@ -49,8 +55,17 @@ public class ProductService {
 		
 	}
 	
-	public ProductPrice updateProductDetails(ProductPrice price) {
-		return productRepo.save(price);
+	public ProductPrice updateProductDetails(ProductPrice price) throws Exception{
+		logger.info("Updating Product to Repository.........");
+		Long id = price.get_Id();
+		price =  productRepo.save(price);
+		
+		if(price == null) {
+			throw new Exception("Error while updating product with ID"+id);
+		}
+			else {
+				return price;
+		}
 	}
 	
 	

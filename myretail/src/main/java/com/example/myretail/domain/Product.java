@@ -1,9 +1,13 @@
 package com.example.myretail.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class Product {
 	
 	Long id;
 	String name;
+	@JsonInclude(Include.NON_NULL)
 	   ProductPrice current_price;
 	public Product(Long id, String string) {
 		this.id = id;

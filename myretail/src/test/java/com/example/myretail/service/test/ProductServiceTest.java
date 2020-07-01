@@ -44,7 +44,13 @@ public class ProductServiceTest {
 	  
 	    	given(mockRepository.findById((long) 13860428)).willReturn(Optional.of(price));
 	    	
-	    	final Product expected = mockService.findProductById((long) 13860428);
+	    	Product expected = null;
+			try {
+				expected = mockService.findProductById((long) 13860428);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    	assertThat(expected).isNotNull();
 	    	
 	    	
@@ -62,7 +68,13 @@ public class ProductServiceTest {
 	  
 	    	given(mockRepository.save(price)).willReturn(price);
 	    	
-	    	final ProductPrice expected = mockService.updateProductDetails(price);
+	    	ProductPrice expected = null;
+			try {
+				expected = mockService.updateProductDetails(price);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    	assertThat(expected).isNotNull();
 	    	
 	    	
